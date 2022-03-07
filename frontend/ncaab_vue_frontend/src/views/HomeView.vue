@@ -1,9 +1,10 @@
 <script setup>
-import TheWelcome from "@/components/TheWelcome.vue";
+import FullRankings from "@/components/FullRankings.vue";
 </script>
 
 <template>
   <main>
-    <TheWelcome />
+    <FullRankings />
   </main>
 </template>
+
