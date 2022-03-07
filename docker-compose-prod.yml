@@ -15,7 +15,7 @@ services:
       - ALLOWED_HOST=https://ncaa-api.winecoffeewifi.com
     networks:
       ncaab_net:
-        ipv4_address: 172.99.2.4
+        ipv4_address: 172.99.3.4
     stdin_open: true # docker run -i
     tty: true # docker run -t
   api-server:
@@ -24,7 +24,7 @@ services:
       - ./api_nginx:/etc/nginx/conf.d
     networks:
       ncaab_net:
-        ipv4_address: 172.99.2.5
+        ipv4_address: 172.99.3.5
     stdin_open: true # docker run -i
     tty: true # docker run -t
   frontend:
@@ -36,10 +36,9 @@ services:
       # Mount the root folder that contains .git
       #- ./frontend:/ncaab_vue_frontend:cached
       - ./frontend/frontend_nginx:/etc/nginx/conf.d
-    
     networks:
       ncaab_net:
-        ipv4_address: 172.99.2.3
+        ipv4_address: 172.99.3.3
     stdin_open: true # docker run -i
     tty: true # docker run -t
   
@@ -49,7 +48,7 @@ networks:
     ipam:
       driver: default
       config:
-        - subnet: 172.99.2.0/24
-          gateway: 172.99.2.1
+        - subnet: 172.99.3.0/24
+          gateway: 172.99.3.1
 
 
