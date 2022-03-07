@@ -1,6 +1,6 @@
 /week_env
 *.db
-/__pycache__
+__pycache__
 /.vscode
 /api/ncaab/db.sqlite3
 /api/ncaab/error.log
