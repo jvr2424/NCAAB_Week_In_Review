@@ -13,6 +13,7 @@ services:
     environment:
       - ENV=prod
       - ALLOWED_HOST=https://ncaa-api.winecoffeewifi.com
+      - ALLOWED_ORIGIN=https://ncaab.winecoffeewifi.com
     networks:
       ncaab_net:
         ipv4_address: 172.99.3.4
@@ -22,6 +23,8 @@ services:
     image: nginx
     volumes:
       - ./api_nginx:/etc/nginx/conf.d
+    ports:
+      - 86:80
     networks:
       ncaab_net:
         ipv4_address: 172.99.3.5
@@ -36,6 +39,8 @@ services:
       # Mount the root folder that contains .git
       #- ./frontend:/ncaab_vue_frontend:cached
       - ./frontend/frontend_nginx:/etc/nginx/conf.d
+    ports:
+      - 85:80
     networks:
       ncaab_net:
         ipv4_address: 172.99.3.3
