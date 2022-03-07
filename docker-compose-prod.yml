@@ -12,7 +12,7 @@ services:
       - 8000:8000
     environment:
       - ENV=prod
-      - ALLOWED_HOST=https://ncaa-api.winecoffeewifi.com
+      - ALLOWED_HOST=https://ncaab-api.winecoffeewifi.com
       - ALLOWED_ORIGIN=https://ncaab.winecoffeewifi.com
     networks:
       ncaab_net:

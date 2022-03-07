@@ -8,6 +8,6 @@ echo "0 8 * * * python /ncaab/ncaab/top_teams_week/load_data/collect_data_main.p
 crontab cron_schedule
 cron
 
-gunicorn ncaab.wsgi:application --bind 0.0.0.0:8000
-python /ncaab/ncaab/top_teams_week/load_data/collect_data_main.py
+cd ncaab/ && gunicorn ncaab.wsgi:application --bind 0.0.0.0:8000
+python ncaab/top_teams_week/load_data/collect_data_main.py
 

@@ -3,3 +3,5 @@
 /__pycache__
 /.vscode
 /api/ncaab/db.sqlite3
+/api/ncaab/error.log
+/api/ncaab/access.log
