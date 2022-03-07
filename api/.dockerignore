@@ -1,0 +1,6 @@
+docs/
+__pycache__
+week_env/
+*.sqlite3
+*.db
+

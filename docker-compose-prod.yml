@@ -1,0 +1,55 @@
+version: '3'
+services:
+  api:
+    build: 
+      context: ./api
+      dockerfile: ./Dockerfile_api.prod
+    image: ncaab_django_api_prod
+    volumes:
+      # Mount the root folder that contains .git
+      - ./api:/ncaab:cached
+    ports:
+      - 8000:8000
+    environment:
+      - ENV=prod
+      - ALLOWED_HOST=https://ncaa-api.winecoffeewifi.com
+    networks:
+      ncaab_net:
+        ipv4_address: 172.99.2.4
+    stdin_open: true # docker run -i
+    tty: true # docker run -t
+  api-server:
+    image: nginx
+    volumes:
+      - ./api_nginx:/etc/nginx/conf.d
+    networks:
+      ncaab_net:
+        ipv4_address: 172.99.2.5
+    stdin_open: true # docker run -i
+    tty: true # docker run -t
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: ./Dockerfile_vue.prod
+    image: ncaab_vue_frontend_prod
+    volumes:
+      # Mount the root folder that contains .git
+      #- ./frontend:/ncaab_vue_frontend:cached
+      - ./frontend/frontend_nginx:/etc/nginx/conf.d
+    
+    networks:
+      ncaab_net:
+        ipv4_address: 172.99.2.3
+    stdin_open: true # docker run -i
+    tty: true # docker run -t
+  
+networks:
+  ncaab_net:
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.99.2.0/24
+          gateway: 172.99.2.1
+
+

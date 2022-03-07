@@ -1,0 +1,5 @@
+/week_env
+*.db
+/__pycache__
+/.vscode
+/api/ncaab/db.sqlite3

@@ -1,0 +1,10 @@
+{
+    "dockerComposeFile": ["../docker-compose.yml"],
+    "service": "frontend",
+    "shutdownAction": "none",
+    "workspaceFolder": "/workspace/frontend",
+    "remoteUser": "dev",
+    "mounts": [
+      "source=.,target=.,type=bind,consistency=cached"
+    ]
+  }
