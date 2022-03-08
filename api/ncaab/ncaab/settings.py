@@ -24,12 +24,12 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-walba&0$qie#qpocu8ze_d)!b9=6w55)ejt^z=txh+-2#!^m_('
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.environ['ENV_NAME'] == 'dev'
 
-if os.environ['ENV'] == 'dev':
+if os.environ['ENV_NAME'] == 'dev':
     ALLOWED_HOSTS = ['*']    
 else:
-    ALLOWED_HOSTS = [os.environ['ALLOWED_HOST']]
+    ALLOWED_HOSTS = [os.environ['ALLOWED_HOST'],]
 
 
 # Application definition
@@ -76,10 +76,8 @@ TEMPLATES = [
     },
 ]
 
-if os.environ['ENV'] == 'dev':
-    WSGI_APPLICATION = 'ncaab.wsgi.application'
-else:
-    WSGI_APPLICATION = 'ncaab.wsgi.application'
+
+WSGI_APPLICATION = 'ncaab.wsgi.application'
 
 
 
@@ -150,6 +148,9 @@ DATABASE_ROUTERS = (
 
 CORS_ALLOWED_ORIGINS = [
 "http://localhost:85",
-"http://127.0.0.1:85"
+"http://127.0.0.1:85",
 os.environ['ALLOWED_ORIGIN'],
+os.environ['ALLOWED_HOST'],
+'https://' + os.environ['ALLOWED_ORIGIN'],
+'https://' + os.environ['ALLOWED_HOST'],
 ]

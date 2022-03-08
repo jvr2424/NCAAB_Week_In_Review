@@ -1,6 +1,11 @@
 FROM python:3.8-slim
 WORKDIR /ncaab
 COPY . /ncaab
-RUN pip install -r requirements.txt
+ENV ALLOWED_HOST=ncaab-api.winecoffeewifi.com
+ENV ALLOWED_ORIGIN=ncaab.winecoffeewifi.com
+ENV ENV_NAME=prod
 EXPOSE 8000
 RUN /ncaab/start_server_prod.sh
+
+WORKDIR /ncaab/ncaab
+CMD ["gunicorn", "ncaab.wsgi:application", "--bind", "0.0.0.0:8000"]

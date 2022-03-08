@@ -11,8 +11,9 @@ services:
     ports:
       - 8000:8000
     environment:
-      - ENV=dev
-      - ALLOWED_HOST=https://ncaa-api.winecoffeewifi.com
+      - ENV_NAME=dev
+      - ALLOWED_HOST=https://ncaab-api.winecoffeewifi.com
+      - ALLOWED_ORIGIN=https://ncaab.winecoffeewifi.com
     networks:
       ncaab_net:
         ipv4_address: 172.99.2.4

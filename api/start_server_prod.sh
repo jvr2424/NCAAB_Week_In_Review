@@ -1,3 +1,4 @@
+pip install -r requirements.txt
 pip install gunicorn
 
 apt-get update && apt-get upgrade -y && apt-get install cron -y
@@ -8,6 +9,11 @@ echo "0 8 * * * python /ncaab/ncaab/top_teams_week/load_data/collect_data_main.p
 crontab cron_schedule
 cron
 
-cd ncaab/ && gunicorn ncaab.wsgi:application --bind 0.0.0.0:8000
+
+echo "test" >> vars.txt
+echo "$ENV_NAME" >> vars.txt
+echo "$ALLOWED_HOST" >> vars.txt
+echo "$ALLOWED_ORIGIN" >> vars.txt
+
 python ncaab/top_teams_week/load_data/collect_data_main.py
 
