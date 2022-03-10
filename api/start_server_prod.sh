@@ -1,4 +1,4 @@
-pip install -r requirements.txt
+#pip install -r requirements.txt
 pip install gunicorn
 
 apt-get update && apt-get upgrade -y && apt-get install cron -y

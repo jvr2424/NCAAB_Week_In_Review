@@ -1,7 +1,8 @@
-version: '3'
+version: '3.4'
 services:
   api:
     build: 
+      network: host
       context: ./api
       dockerfile: ./Dockerfile_api.prod
     image: ncaab_django_api_prod
@@ -15,16 +16,12 @@ services:
     networks:
       vmdockernetwork:
         ipv4_address: 10.8.29.201
-    dns:
-      - 10.8.29.247
     stdin_open: true # docker run -i
     tty: true # docker run -t
   api-server:
     image: nginx
     volumes:
       - ./api_nginx:/etc/nginx/conf.d
-    dns:
-      - 10.8.29.247
     networks:
       vmdockernetwork:
         ipv4_address: 10.8.29.202
@@ -32,6 +29,7 @@ services:
     tty: true # docker run -t
   frontend:
     build:
+      network: host
       context: ./frontend
       dockerfile: ./Dockerfile_vue.prod
     image: ncaab_vue_frontend_prod
@@ -39,8 +37,6 @@ services:
       # Mount the root folder that contains .git
       #- ./frontend:/ncaab_vue_frontend:cached
       - ./frontend/frontend_nginx:/etc/nginx/conf.d
-    dns:
-      - 10.8.29.247
     networks:
       vmdockernetwork:
         ipv4_address: 10.8.29.203
