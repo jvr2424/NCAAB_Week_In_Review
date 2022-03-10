@@ -1,6 +1,12 @@
 docs/
 __pycache__
 week_env/
+*_env/
+*_env
+/*_env
+ncaab_env/
+ncaab_env
+/ncaab_env
 *.sqlite3
 *.db
 

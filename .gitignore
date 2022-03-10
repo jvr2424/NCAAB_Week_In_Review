@@ -6,6 +6,13 @@ __pycache__
 /api/ncaab/error.log
 /api/ncaab/access.log
 
+*_env/
+*_env
+/*_env
+ncaab_env/
+ncaab_env
+/ncaab_env
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]

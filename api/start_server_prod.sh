@@ -1,4 +1,11 @@
-#pip install -r requirements.txt
+#apt-get install cmake
+python venv ncaab_env
+source ncaab_env/bin/activate
+pip install --upgrade pip setuptools wheel
+pip install --upgrade cython
+
+
+pip install -r requirements.txt
 pip install gunicorn
 
 apt-get update && apt-get upgrade -y && apt-get install cron -y
