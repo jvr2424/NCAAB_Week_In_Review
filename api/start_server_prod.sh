@@ -1,6 +1,6 @@
 #apt-get install cmake
 python -m venv ncaab_env
-source ncaab_env/bin/activate
+. ncaab_env/bin/activate
 pip install --upgrade pip setuptools wheel
 pip install --upgrade cython
 
