@@ -15,12 +15,16 @@ services:
     networks:
       vmdockernetwork:
         ipv4_address: 10.8.29.201
+    dns:
+      - 10.8.29.247
     stdin_open: true # docker run -i
     tty: true # docker run -t
   api-server:
     image: nginx
     volumes:
       - ./api_nginx:/etc/nginx/conf.d
+    dns:
+      - 10.8.29.247
     networks:
       vmdockernetwork:
         ipv4_address: 10.8.29.202
@@ -35,6 +39,8 @@ services:
       # Mount the root folder that contains .git
       #- ./frontend:/ncaab_vue_frontend:cached
       - ./frontend/frontend_nginx:/etc/nginx/conf.d
+    dns:
+      - 10.8.29.247
     networks:
       vmdockernetwork:
         ipv4_address: 10.8.29.203
