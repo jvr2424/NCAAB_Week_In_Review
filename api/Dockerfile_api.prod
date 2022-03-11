@@ -1,4 +1,5 @@
-FROM python:3.8-slim
+#FROM python:3.8-slim
+FROM arm64v8/python:3.8
 WORKDIR /ncaab
 COPY ./ /ncaab/
 ENV ALLOWED_HOST=ncaab-api.winecoffeewifi.com
