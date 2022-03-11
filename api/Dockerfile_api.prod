@@ -1,15 +1,40 @@
 #FROM python:3.8-slim
+
+FROM arm64v8/python:3.8 as build
+RUN apt-get update && apt-get install -y --no-install-recommends build-essential gcc 
+
+
+WORKDIR /usr/app
+RUN python -m venv /usr/app/venv
+ENV PATH="/usr/app/venv/bin:$PATH"
+
+COPY requirements.txt .
+RUN pip install --upgrade pip setuptools wheel
+RUN pip install -r requirements.txt
+RUN pip install gunicorn
+
+
 FROM arm64v8/python:3.8
-WORKDIR /ncaab
-COPY ./ /ncaab/
+WORKDIR /usr/app/venv
+COPY --from=build /usr/app/venv ./venv
+COPY . .
+
+ENV PATH="/usr/app/venv/bin:$PATH"
 ENV ALLOWED_HOST=ncaab-api.winecoffeewifi.com
 ENV ALLOWED_ORIGIN=ncaab.winecoffeewifi.com
 ENV ENV_NAME=prod
+
+
+#WORKDIR /ncaab
+#COPY ./ /ncaab/
+
+RUN ./start_server_prod.sh
+
+WORKDIR ./ncaab
+EXPOSE 8000
+CMD ["gunicorn", "ncaab.wsgi:application", "--bind", "0.0.0.0:8000"]
+
 #apt-get install cmake
 #RUN pip install --upgrade pip
 #RUN pip install -r /ncaab/requirements.txt
-RUN /ncaab/start_server_prod.sh
 
-EXPOSE 8000
-WORKDIR /ncaab/ncaab
-CMD ["gunicorn", "ncaab.wsgi:application", "--bind", "0.0.0.0:8000"]
