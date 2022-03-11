@@ -5,6 +5,7 @@ __pycache__
 /api/ncaab/db.sqlite3
 /api/ncaab/error.log
 /api/ncaab/access.log
+*.tar
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

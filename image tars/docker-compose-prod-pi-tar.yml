@@ -1,0 +1,32 @@
+version: '3'
+services:
+  api:
+    image: ncaab_django_api_prod:latest
+    volumes:
+      # Mount the root folder that contains .git
+      - ./api:/ncaab
+    environment:
+      - ALLOWED_HOST=ncaab-api.winecoffeewifi.com
+      - ALLOWED_ORIGIN=ncaab.winecoffeewifi.com
+      - ENV_NAME=prod
+    networks:
+      vmdockernetwork:
+        ipv4_address: 10.8.29.201
+    stdin_open: true # docker run -i
+    tty: true # docker run -t
+  frontend:
+    image: ncaab_vue_frontend_prod:latest
+    volumes:
+      # Mount the root folder that contains .git
+      #- ./frontend:/ncaab_vue_frontend:cached
+      - ./frontend_nginx:/etc/nginx/conf.d
+    networks:
+      vmdockernetwork:
+        ipv4_address: 10.8.29.202
+    stdin_open: true # docker run -i
+    tty: true # docker run -t
+networks:
+  vmdockernetwork:
+    external: true
+
+
