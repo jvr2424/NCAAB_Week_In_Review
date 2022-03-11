@@ -1,11 +1,15 @@
-FROM python:3.8-slim
+#FROM python:3.8-slim
+FROM arm64v8/python:3.8
 WORKDIR /ncaab
-COPY . /ncaab
+COPY ./ /ncaab/
 ENV ALLOWED_HOST=ncaab-api.winecoffeewifi.com
 ENV ALLOWED_ORIGIN=ncaab.winecoffeewifi.com
 ENV ENV_NAME=prod
-EXPOSE 8000
+#apt-get install cmake
+#RUN pip install --upgrade pip
+#RUN pip install -r /ncaab/requirements.txt
 RUN /ncaab/start_server_prod.sh
 
+EXPOSE 8000
 WORKDIR /ncaab/ncaab
 CMD ["gunicorn", "ncaab.wsgi:application", "--bind", "0.0.0.0:8000"]

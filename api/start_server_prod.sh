@@ -1,7 +1,15 @@
+#apt-get install cmake
+apt-get update && apt-get upgrade -y && apt-get install cron build-essential -y
+python -m venv ncaab_env
+. ncaab_env/bin/activate
+pip install --upgrade pip setuptools wheel
+pip install --upgrade cython
+pip install numpy==1.17.4
+
+
 pip install -r requirements.txt
 pip install gunicorn
 
-apt-get update && apt-get upgrade -y && apt-get install cron -y
 
 # load the db at 3 am EST every night (+5 UTC)
 echo "0 8 * * * python /ncaab/ncaab/top_teams_week/load_data/collect_data_main.py" > cron_schedule

@@ -1,7 +1,8 @@
-version: '3'
+version: '3.4'
 services:
   api:
     build: 
+      network: host
       context: ./api
       dockerfile: ./Dockerfile_api.prod
     image: ncaab_django_api_prod
@@ -28,6 +29,7 @@ services:
     tty: true # docker run -t
   frontend:
     build:
+      network: host
       context: ./frontend
       dockerfile: ./Dockerfile_vue.prod
     image: ncaab_vue_frontend_prod
