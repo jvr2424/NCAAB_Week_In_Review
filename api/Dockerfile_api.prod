@@ -1,6 +1,6 @@
 #FROM python:3.8-slim
 
-FROM arm64v8/python:3.8 as build
+FROM arm64v8/python:3.10 as build
 RUN apt-get update && apt-get install -y --no-install-recommends build-essential gcc 
 
 
@@ -14,7 +14,7 @@ RUN pip install -r requirements.txt
 RUN pip install gunicorn
 
 
-FROM arm64v8/python:3.8
+FROM arm64v8/python:3.10
 WORKDIR /usr/app/venv
 COPY --from=build /usr/app/venv ./venv
 COPY . .
