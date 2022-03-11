@@ -18,7 +18,8 @@ echo "0 8 * * * python /ncaab/ncaab/top_teams_week/load_data/collect_data_main.p
 crontab cron_schedule
 cron
 
-
+echo "$PATH"
+ls
 echo "test" >> vars.txt
 echo "$ENV_NAME" >> vars.txt
 echo "$ALLOWED_HOST" >> vars.txt
