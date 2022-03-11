@@ -1,5 +1,5 @@
 #apt-get install cmake
-apt-get install cron -y
+apt-get update && apt-get upgrade -y && apt-get install cron -y
 # apt-get update && apt-get upgrade -y && apt-get install cron build-essential -y
 # python -m venv ncaab_env
 # . ncaab_env/bin/activate
