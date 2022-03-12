@@ -7,8 +7,9 @@ services:
       dockerfile: ./Dockerfile_api.prod
     image: ncaab_django_api_prod
     volumes:
-      # Mount the root folder that contains .git
-      - ../volume_api:/usr/app/venv/ncaab
+      #named volumes wont replace data with nothing
+      - api_source:/usr/app/venv/ncaab
+      #- ../volume_api:/usr/app/venv/ncaab
     environment:
       - ALLOWED_HOST=ncaab-api.winecoffeewifi.com
       - ALLOWED_ORIGIN=ncaab.winecoffeewifi.com
@@ -21,7 +22,8 @@ services:
   api-server:
     image: nginx
     volumes:
-      - ../api_nginx:/etc/nginx/conf.d
+      - api_server_conf:/etc/nginx/conf.d
+      #- ../api_nginx:/etc/nginx/conf.d
     networks:
       vmdockernetwork:
         ipv4_address: 10.8.29.202
@@ -34,9 +36,8 @@ services:
       dockerfile: ./Dockerfile_vue.prod
     image: ncaab_vue_frontend_prod
     volumes:
-      # Mount the root folder that contains .git
-      #- ./frontend:/ncaab_vue_frontend:cached
-      - ./frontend/frontend_nginx:/etc/nginx/conf.d
+      - frontend_server_conf:/etc/nginx/conf.d
+      #- ./frontend/frontend_nginx:/etc/nginx/conf.d
     networks:
       vmdockernetwork:
         ipv4_address: 10.8.29.203
@@ -45,5 +46,29 @@ services:
 networks:
   vmdockernetwork:
     external: true
+#named volumes dont overrive#
+#https://forums.docker.com/t/dockerfile-copy-command-not-copying-files/81520/4
+#If you need to preserve files from the target folder, you will need to use a named volume, as its default behavior is to copy per-existing files into the volume.
+#create a named volume using the local driver of the type bind.
+volumes:
+  api_source:
+    driver: local
+    driver_opts:
+      type: 'none'
+      o: 'bind'
+      device: '/home/ubuntu/docker_containers/ncaab_week_in_review/api_source'
+  api_server_conf:
+    driver: local
+    driver_opts:
+      type: 'none'
+      o: 'bind'
+      device: '/home/ubuntu/docker_containers/ncaab_week_in_review/nginx/api_server'
+  frontend_server_conf:
+    driver: local
+    driver_opts:
+      type: 'none'
+      o: 'bind'
+      device: '/home/ubuntu/docker_containers/ncaab_week_in_review/nginx/frontend_server'
+
 
 
