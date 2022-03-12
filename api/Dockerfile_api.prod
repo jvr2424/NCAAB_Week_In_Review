@@ -31,6 +31,8 @@ ENV ENV_NAME=prod
 RUN ./start_server_prod.sh
 
 WORKDIR ./ncaab
+#this needs to be after everything -- if anything changes after volume it will revert to that point
+VOLUME ["/usr/app/venv/ncaab"]
 EXPOSE 8000
 CMD ["gunicorn", "ncaab.wsgi:application", "--bind", "0.0.0.0:8000"]
 
