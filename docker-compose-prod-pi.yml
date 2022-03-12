@@ -8,7 +8,7 @@ services:
     image: ncaab_django_api_prod
     volumes:
       # Mount the root folder that contains .git
-      - ./api:/ncaab
+      - ../volume_api:/usr/app/venv/ncaab
     environment:
       - ALLOWED_HOST=ncaab-api.winecoffeewifi.com
       - ALLOWED_ORIGIN=ncaab.winecoffeewifi.com
@@ -21,7 +21,7 @@ services:
   api-server:
     image: nginx
     volumes:
-      - ./api_nginx:/etc/nginx/conf.d
+      - ../api_nginx:/etc/nginx/conf.d
     networks:
       vmdockernetwork:
         ipv4_address: 10.8.29.202
