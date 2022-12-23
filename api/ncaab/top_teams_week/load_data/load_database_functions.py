@@ -6,7 +6,7 @@ import datetime
 import sqlite3
 import re
 
-CURRENT_SEASON = 2021
+CURRENT_SEASON = 2022
 LATEST_RANKINGS_URL = 'https://www.espn.com/mens-college-basketball/rankings'
 WEEKLY_RANKINGS_URL = f'https://www.espn.com/mens-college-basketball/rankings/_/week/WEEK_NUMBER/year/{CURRENT_SEASON+1}/seasontype/2' #'https://www.espn.com/mens-college-basketball/rankings/_/week/15/year/2022/seasontype/2'
 TEAM_SCHEDULE_URL = 'https://www.espn.com/mens-college-basketball/team/schedule/_/id/TEAM_ID' #replace TEAM_ID with espn_team_id
@@ -216,8 +216,8 @@ def load_or_update_schedule(con, espn_team_id):
                     #date_str = datetime.datetime.fromisoformat('2021-11-09T06:00:00').strftime('%Y-%m-%d')
                     date_str = this_game['game_date']
                     week_q = f"""SELECT week_number FROM weeks WHERE '{date_str}'>= start_date_inclusive and '{date_str}'< end_date_exclusive"""
-                    #print(week_q)
-                    #print(this_game)
+                    # print(date_str)
+                    # print(this_game)
                     week_number = cur.execute(week_q).fetchone()[0]
                     this_game['week_number'] = week_number
 
@@ -320,6 +320,10 @@ def get_latest_week():
     soup = BeautifulSoup(rank_res.content, 'lxml')
     # get latest week
     latest_week = soup.select_one('div.dropdown:nth-child(2) > select:nth-child(2)').find_all('option')[-1].attrs['value'].replace('Week ', '')
+    if latest_week == 'Preseason':
+        latest_week = 1
+    elif latest_week == 'Final Rankings':
+            latest_week = 19
     return latest_week
 
 def update_latest_week(con):
@@ -373,12 +377,23 @@ def create_weeks_table(con, start_date, end_date):
     
 
     all_weeks = []
+    try:
+        latest_week_val = int(latest_week)
+    except:
+        if latest_week == 'Preseason':
+            latest_week_val = 1
+        elif latest_week == 'Final Rankings':
+            latest_week_val = 19
+        else:
+            latest_week_val = 1
     for week_number in range(1,int(num_weeks) +1):
+        print(week_number)
+    
         all_weeks.append({
             'week_number': week_number,
             'start_date_inclusive': start_date_inclusive.isoformat(), #start_date_inclusive.strftime("%m-%d-%y"),
             'end_date_exclusive': end_date_exclusive.isoformat(), #end_date_exclusive.strftime("%m-%d-%y"),
-            'is_current_week' : week_number == int(latest_week)
+            'is_current_week' : week_number == latest_week_val
         })
 
         start_date_inclusive =start_date_inclusive +datetime.timedelta(days=7)

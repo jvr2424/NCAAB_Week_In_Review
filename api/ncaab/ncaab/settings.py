@@ -91,7 +91,7 @@ DATABASES = {
     },
     'top_teams_db': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'top_teams_week' / 'load_data' / 'all_cbb_data_2-24_v1.db',
+        'NAME': BASE_DIR / 'top_teams_week' / 'load_data' / 'all_cbb_data_11_11_v1.db',
     },
 
 }
@@ -146,11 +146,16 @@ DATABASE_ROUTERS = (
 
 
 
-CORS_ALLOWED_ORIGINS = [
-"http://localhost:85",
-"http://127.0.0.1:85",
-os.environ['ALLOWED_ORIGIN'],
-os.environ['ALLOWED_HOST'],
-'https://' + os.environ['ALLOWED_ORIGIN'],
-'https://' + os.environ['ALLOWED_HOST'],
-]
+CORS_ALLOW_ALL_ORIGINS = True
+# CORS_ALLOWED_ORIGINS = [
+#     "*.com",
+# # "http://localhost:85",
+# # "http://localhost:8888",
+# # "http://127.0.0.1:85",
+# # "http://10.8.29.6:8888",
+# # "http://0.0.0.0:8888",
+# # os.environ['ALLOWED_ORIGIN'],
+# # os.environ['ALLOWED_HOST'],
+# #'https://' + os.environ['ALLOWED_ORIGIN'],
+# #'https://' + os.environ['ALLOWED_HOST'],
+# ]

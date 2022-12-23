@@ -39,7 +39,7 @@ import load_database_functions
 #     - is_current_week
 
 #DATABASE_NAME = '../../db.sqlite3'
-DATABASE_NAME = 'all_cbb_data_2-24_v1.db'
+DATABASE_NAME = 'all_cbb_data_11_11_v1.db'
 
 def setup_db(con):
     cur = con.cursor()
@@ -78,8 +78,8 @@ def setup_db(con):
 
     
 
-    season_start_date = datetime.date(2021, 11, 8)
-    season_end_date = datetime.date(2022, 3, 14)
+    season_start_date = datetime.date(2022, 11, 7)
+    season_end_date = datetime.date(2023, 3, 13)
 
     weeks_df = load_database_functions.create_weeks_table(con, season_start_date, season_end_date)
     print(weeks_df)

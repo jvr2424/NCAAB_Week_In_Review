@@ -12,11 +12,13 @@ services:
       - 8000:8000
     environment:
       - ENV_NAME=dev
-      - ALLOWED_HOST=https://ncaab-api.winecoffeewifi.com
-      - ALLOWED_ORIGIN=https://ncaab.winecoffeewifi.com
+      #- ALLOWED_HOST=https://ncaab-api.winecoffeewifi.com
+      #- ALLOWED_ORIGIN=https://ncaab.winecoffeewifi.com
+      - ALLOWED_HOST=https://dev-api.winecoffeewifi.com
+      - ALLOWED_ORIGIN=https://dev.winecoffeewifi.com
     networks:
       ncaab_net:
-        ipv4_address: 172.99.2.4
+        ipv4_address: 172.89.2.4
     stdin_open: true # docker run -i
     tty: true # docker run -t
   frontend:
@@ -36,7 +38,7 @@ services:
       - "api:pwd_django_api"
     networks:
       ncaab_net:
-        ipv4_address: 172.99.2.3
+        ipv4_address: 172.89.2.3
     stdin_open: true # docker run -i
     tty: true # docker run -t
   
@@ -46,7 +48,7 @@ networks:
     ipam:
       driver: default
       config:
-        - subnet: 172.99.2.0/24
-          gateway: 172.99.2.1
+        - subnet: 172.89.2.0/24
+          gateway: 172.89.2.1
 
 
