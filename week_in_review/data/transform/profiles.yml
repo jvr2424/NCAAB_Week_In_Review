@@ -1,0 +1,25 @@
+jaffle_shop:
+  target: dev
+  outputs:
+    dev:
+      type: postgres
+      host: 172.02.2.3
+      user: postgres
+      password: example
+      port: 5432
+      dbname: raw
+      schema: public
+      # threads: 4
+
+ncaa_week_review:
+  target: dev
+  outputs:
+    dev:
+      type: postgres
+      host: 172.02.2.3
+      user: postgres
+      password: example
+      port: 5432
+      dbname: raw
+      schema: public
+      # threads: 4

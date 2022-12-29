@@ -1,0 +1,127 @@
+version: 2
+
+sources:
+  - name: raw
+    schema: public
+    description: data from scraped from ESPN
+    tables:
+      - name: raw_leagues
+        columns:
+          - name: league_id
+            tests:
+              - unique
+              - not_null
+          - name: league_name
+            tests:
+              - unique
+              - not_null
+      - name: raw_weeks
+        columns:
+          - name: week_num
+            tests:
+              - unique
+              - not_null
+          - name: start_date
+            tests:
+              - unique
+              - not_null
+          - name: end_date
+            tests:
+              - unique
+              - not_null
+      - name: raw_mens_schedules
+        columns:
+          - name: espn_team_id
+            tests:
+              - not_null
+
+          - name: game_date
+            tests:
+              - not_null
+
+          - name: is_home
+            tests:
+              - not_null
+          - name: opponent_espn_team_id
+            tests:
+              - not_null
+          - name: opponent_team_name
+            tests:
+                - not_null
+          - name: opponent_logo_url
+          - name: is_neutral_court
+            tests:
+              - not_null
+          - name: cancelled_or_postponed
+          - name: is_overtime
+          - name: is_win
+          - name: final_score
+          - name: opponent_final_score
+          - name: game_time
+          - name: tv
+      - name: raw_womens_schedules
+        columns:
+          - name: espn_team_id
+            tests:
+              - not_null
+
+          - name: game_date
+            tests:
+              - not_null
+
+          - name: is_home
+            tests:
+              - not_null
+          - name: opponent_espn_team_id
+            tests:
+              - not_null
+          - name: is_neutral_court
+            tests:
+              - not_null
+          - name: cancelled_or_postponed
+          - name: is_overtime
+          - name: is_win
+          - name: final_score
+          - name: opponent_final_score
+          - name: game_time
+          - name: tv
+      - name: raw_mens_week_rankings
+        columns:
+          - name: week
+            tests:
+              - not_null
+
+          - name: rankings
+            tests:
+              - not_null
+
+          - name: logo_url
+            tests:
+              - not_null
+          - name: team_name
+            tests:
+              - not_null
+          - name: team_page_url
+            tests:
+              - not_null
+          - name: record
+      - name: raw_womens_week_rankings
+        columns:
+          - name: week
+            tests:
+              - not_null
+
+          - name: rankings
+            tests:
+              - not_null
+
+          - name: logo_url
+            tests:
+              - not_null
+          - name: team_name
+            tests:
+              - not_null
+          - name: team_page_url
+            tests:
+              - not_null
+          - name: record

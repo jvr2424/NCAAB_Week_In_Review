@@ -1,5 +1,0 @@
-FROM python:3.8-slim
-WORKDIR /ncaab
-COPY . /ncaab
-RUN pip install -r requirements.txt
-EXPOSE 8000

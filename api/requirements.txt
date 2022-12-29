@@ -1,8 +1,0 @@
-beautifulsoup4
-django-cors-headers
-django-rest-framework
-djangorestframework
-numpy
-lxml
-pandas
-requests
