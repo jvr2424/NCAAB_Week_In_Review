@@ -1,17 +1,7 @@
-"""
-REWRITE OBJECTIVES
-
-1)handle preseason
-2)handle scheudle changes/ conference tournaments
-3)handle Womens 
-4)handle mulitple years
-
-move to BBALL REF?
-
-"""
-
 import datetime
+import os
 import re
+from dataclasses import dataclass, field
 
 import pandas as pd
 import requests
@@ -28,22 +18,53 @@ BASE_TEAM_HOME_URL = "/%s/team/_/id/TEAM_ID"  # replace TEAM_ID with espn_team_i
 LOGO_URL = "https://a.espncdn.com/combiner/i?img=/i/teamlogos/ncaa/500/TEAM_ID.png&w=40&h=40"  # replace TEAM_ID with espn_team_id
 
 
+@dataclass
 class EspnUrls:
-    def __init__(self, path: str) -> None:
-        self.PATH = path
+    PATH: str
+    LATEST_RANKINGS_URL: str = field(init=False)
+    WEEKLY_RANKINGS_URL: str = field(init=False)
+    TEAM_SCHEDULE_URL: str = field(init=False)
+    TEAM_HOME_URL: str = field(init=False)
+    base_path: str = field(init=False)
+
+    def __post_init__(self):
         self.LATEST_RANKINGS_URL = BASE_LATEST_RANKINGS_URL % self.PATH
         self.WEEKLY_RANKINGS_URL = BASE_WEEKLY_RANKINGS_URL % self.PATH
         self.TEAM_SCHEDULE_URL = BASE_TEAM_SCHEDULE_URL % self.PATH
         self.TEAM_HOME_URL = BASE_TEAM_HOME_URL % self.PATH
-
-    @property
-    def base_path(self) -> str:
         idx = self.PATH.find("-")
-        return self.PATH[:idx]
+        self.base_path = self.PATH[:idx]
+
+    # def __init__(self, path: str) -> None:
+    #     self.PATH = path
+    #     self.LATEST_RANKINGS_URL = BASE_LATEST_RANKINGS_URL % self.PATH
+    #     self.WEEKLY_RANKINGS_URL = BASE_WEEKLY_RANKINGS_URL % self.PATH
+    #     self.TEAM_SCHEDULE_URL = BASE_TEAM_SCHEDULE_URL % self.PATH
+    #     self.TEAM_HOME_URL = BASE_TEAM_HOME_URL % self.PATH
+
+    def __str__(self) -> str:
+        return self.base_path
+
+    # @property
+    # def base_path(self) -> str:
+    #     idx = self.PATH.find("-")
+    #     return self.PATH[:idx]
+
+
+MENS_URLS = EspnUrls(MENS_PATH)
+WOMENS_URLS = EspnUrls(WOMENS_PATH)
+
+MENS_RANKINGS_TABLE_NAME = f"raw_{MENS_URLS.base_path}_week_rankings"
+WOMENS_RANKINGS_TABLE_NAME = f"raw_{WOMENS_URLS.base_path}_week_rankings"
+
+MENS_SCHEDULE_TABLE_NAME = f"raw_{MENS_URLS.base_path}_schedules"
+WOMENS_SCHEDULE_TABLE_NAME = f"raw_{WOMENS_URLS.base_path}_schedules"
 
 
 def write_to_db(df: pd.DataFrame, table_name: str):
-    conn_string = "postgresql://postgres:example@172.02.2.3/raw"
+    # "postgresql://postgres:example@172.02.2.3/raw"
+
+    conn_string = f"postgresql://{os.environ['POSTGRES_USER']}:{os.environ['POSTGRES_PASSWORD']}@postgres/{os.environ['POSTGRES_DB']}"
     db = create_engine(conn_string)
     conn = db.connect()
     df.to_sql(table_name, con=conn, if_exists="replace", index=False)
@@ -53,13 +74,19 @@ def main():
     """
     entry point for all scraping functions
     """
-    mens_urls = EspnUrls(MENS_PATH)
-    df = get_rankings(mens_urls)
-    get_schedules(mens_urls, df)
+    # mens data
+    men_ranking_df = get_rankings(MENS_URLS)
+    write_to_db(men_ranking_df, MENS_RANKINGS_TABLE_NAME)
 
-    womens_urls = EspnUrls(WOMENS_PATH)
-    df = get_rankings(womens_urls)
-    get_schedules(womens_urls, df)
+    men_schedule_df = get_schedules(MENS_URLS, men_ranking_df)
+    write_to_db(men_schedule_df, MENS_SCHEDULE_TABLE_NAME)
+
+    # womens data
+    women_ranking_df = get_rankings(WOMENS_URLS)
+    write_to_db(women_ranking_df, WOMENS_RANKINGS_TABLE_NAME)
+
+    women_schedule_df = get_schedules(WOMENS_URLS, women_ranking_df)
+    write_to_db(women_schedule_df, MENS_RANKINGS_TABLE_NAME)
 
 
 def get_rankings(urls: EspnUrls) -> pd.DataFrame:
@@ -77,7 +104,6 @@ def get_rankings(urls: EspnUrls) -> pd.DataFrame:
     # get the unique teams
     # get their schedules
     df = pd.DataFrame(all_rankings)
-    write_to_db(df, f"raw_{urls.base_path}_week_rankings")
     return df
 
 
@@ -89,13 +115,12 @@ def get_schedules(urls: EspnUrls, rankings_df: pd.DataFrame) -> pd.DataFrame:
         match = re.search("id/([0-9]+)/", team["team_page_url"])
         if match:
             espn_team_id = int(match.group(1))
-            print(espn_team_id)
             all_schedules += load_or_update_schedule(urls, espn_team_id=espn_team_id)
 
     # with open("test_schedules.json", "w", encoding="utf-8") as f:
     #     f.write(json.dumps(all_schedules))
-    rankings_df = pd.DataFrame(all_schedules)
-    write_to_db(rankings_df, f"raw_{urls.base_path}_schedules")
+    schedule_df = pd.DataFrame(all_schedules)
+    return schedule_df
 
 
 def load_or_update_schedule(urls: EspnUrls, espn_team_id: str) -> list[dict[str, str]]:

@@ -1,2 +1,0 @@
-0 3 * * * python /ncaab/ncaab/top_teams_week/load_data/collect_data_main.py
-## * * * * * echo "testing" >> /ncaab/ncaab/top_teams_week/load_data/testcron.txt

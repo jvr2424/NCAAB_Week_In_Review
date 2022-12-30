@@ -8,19 +8,31 @@ services:
       - ./week_in_review/data:/data:cached
     stdin_open: true # docker run -i
     tty: true # docker run -t
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    hostname: data
+    depends_on:
+      - postgres
+    links:
+      - postgres:postgres
     networks:
       ncaab_net_v2:
         ipv4_address: 172.02.2.2
 
-  postgres_raw:
+  postgres:
     image: postgres
+    hostname: postgres
     restart: always
     volumes:
       - ./week_in_review/db/raw:/var/lib/postgresql
     environment:
-      POSTGRES_DB: raw
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: example
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    ports:
+      - "5432:5432"
     networks:
       ncaab_net_v2:
         ipv4_address: 172.02.2.3

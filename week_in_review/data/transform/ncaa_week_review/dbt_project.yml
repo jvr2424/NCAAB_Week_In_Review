@@ -28,6 +28,8 @@ clean-targets:         # directories to be removed by `dbt clean`
 # Configuring models
 # Full documentation: https://docs.getdbt.com/docs/configuring-models
 
+tests:
+  +store_failures: true  # all tests
 # In this example config, we tell dbt to build all models in the example/ directory
 # as tables. These settings can be overridden in the individual model files
 # using the `{{ config(...) }}` macro.
@@ -36,7 +38,10 @@ models:
     # Config indicated by + and applies to all files under models/example/
     base:
       +materialized: table
+      +schema: base
     stage:
       +materialized: table
+      +schema: staging
     fact:
       +materialized: view
+      +schema: fact

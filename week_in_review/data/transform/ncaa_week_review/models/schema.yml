@@ -85,16 +85,15 @@ sources:
           - name: opponent_final_score
           - name: game_time
           - name: tv
+
       - name: raw_mens_week_rankings
         columns:
           - name: week
             tests:
               - not_null
-
-          - name: rankings
+          - name: ranking
             tests:
               - not_null
-
           - name: logo_url
             tests:
               - not_null
@@ -105,16 +104,15 @@ sources:
             tests:
               - not_null
           - name: record
+
       - name: raw_womens_week_rankings
         columns:
           - name: week
             tests:
               - not_null
-
-          - name: rankings
+          - name: ranking
             tests:
               - not_null
-
           - name: logo_url
             tests:
               - not_null
@@ -125,3 +123,119 @@ sources:
             tests:
               - not_null
           - name: record
+
+
+models:
+  - name: fact_weeks
+    columns:
+      - name: week_number
+        tests:
+          - not_null
+          - unique
+      - name: start_date
+        tests:
+          - not_null
+          - unique
+      - name: end_date
+        tests:
+          - not_null
+          - unique
+      - name: is_current_week
+        tests:
+          - not_null
+        description: True if is the current date false within start date and end date; chcek assert_fact_weeks_has_one_current_week test for failures
+  - name: fact_teams
+    tests:
+      - unique:
+          column_name: "(league_id || '-' || espn_team_id)"
+    columns:
+      - name: league_id
+        tests:
+          - not_null
+          - relationships:
+              to: ref('fact_leagues')
+              field: league_id
+      - name: espn_team_id
+        tests:
+          - not_null
+      - name: team_name
+        tests:
+          - not_null
+      - name: logo_url
+  - name: fact_leagues
+    columns:
+      - name: league_id
+        tests:
+          - not_null
+          - unique
+      - name: league_name
+        tests:
+          - not_null
+          - unique
+  - name: fact_rankings
+    columns:
+      - name: league_id
+        tests:
+          - not_null
+          - relationships:
+              to: ref('fact_leagues')
+              field: league_id
+      - name: week
+        tests:
+          - not_null
+          - relationships:
+              to: ref('fact_weeks')
+              field: week_number
+      - name: ranking
+        tests:
+          - not_null
+      - name: espn_team_id
+        tests:
+          - not_null
+          - relationships:
+              to: ref('fact_teams')
+              field: espn_team_id
+      - name: record
+  - name: fact_schedule
+    columns:
+      - name: league_id
+        tests:
+          - not_null
+          - relationships:
+              to: ref('fact_leagues')
+              field: league_id
+      - name: espn_team_id
+        tests:
+          - not_null
+          - relationships:
+              to: ref('fact_teams')
+              field: espn_team_id
+      - name: game_date
+        tests:
+          - not_null
+      - name: is_home
+        tests:
+          - not_null
+      - name: opponent_espn_team_id
+        tests:
+          - not_null
+          - relationships:
+              to: ref('fact_teams')
+              field: espn_team_id
+      - name: is_neutral_court
+        tests:
+          - not_null
+      - name: cancelled_or_postponed
+      - name: num_overtimes
+      - name: is_win
+      - name: final_score
+      - name: opponent_final_score
+      - name: game_time
+      - name: tv
+      - name: week_number
+        tests:
+          - not_null
+          - relationships:
+              to: ref('fact_weeks')
+              field: week_number
+

@@ -48,7 +48,14 @@ WITH teams_rank as (
     FROM concat_ids
 
 )
-SELECT DISTINCT * FROM all_ids
+SELECT 
+    MAX(league_id)  as league_id,
+    espn_team_id,
+    MAX(team_name) as team_name,
+    MAX(logo_url) as logo_url
+
+FROM all_ids
+GROUP BY espn_team_id
     
   
 
