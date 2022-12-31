@@ -3,7 +3,7 @@ services:
   api:
     build: 
       context: ./week_in_review/api
-      dockerfile: ./Dockerfile_api.dev
+      dockerfile: ./Dockerfile_api.prod
     volumes:
       - ./week_in_review/api:/api:cached
     stdin_open: true # docker run -i
@@ -15,11 +15,14 @@ services:
     hostname: api
     depends_on:
       - postgres
+      - data
     links:
       - postgres:postgres
+    ports:
+      - 85:80
     networks:
       ncaab_net_v2:
-        ipv4_address: 172.02.8.4
+        ipv4_address: 172.02.3.4
 
 
   data:
@@ -41,7 +44,7 @@ services:
       - postgres:postgres
     networks:
       ncaab_net_v2:
-        ipv4_address: 172.02.8.2
+        ipv4_address: 172.02.3.2
 
   postgres:
     image: postgres
@@ -53,30 +56,28 @@ services:
       POSTGRES_DB: ${POSTGRES_DB}
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-    ports:
-      - "5432:5432"
     networks:
       ncaab_net_v2:
-        ipv4_address: 172.02.8.3
+        ipv4_address: 172.02.3.3
 
   
   frontend:
     build:
       context: ./week_in_review/frontend
-      dockerfile: ./Dockerfile_vue.dev
+      dockerfile: ./Dockerfile_vue.prod
     volumes:
       # Mount the root folder that contains .git
-      - ./week_in_review/frontend:/ncaab_vue_frontend:cached
+      #- ./frontend:/ncaab_vue_frontend:cached
+      - ./week_in_review/frontend/frontend_nginx:/etc/nginx/conf.d
     ports:
-      - 8080:8080
-    environment: 
-      - CHOKIDAR_USEPOLLING=true #should enable hot reloading
-      - BACKEND_API_ADDRESS=172.20.2.4
+      - 80:80
     links:
       - "api:api"
+    depends_on:
+      - api
     networks:
       ncaab_net_v2:
-        ipv4_address: 172.02.8.5
+        ipv4_address: 172.02.3.5
     stdin_open: true # docker run -i
     tty: true # docker run -t
   
@@ -86,8 +87,8 @@ networks:
     ipam:
       driver: default
       config:
-        - subnet: 172.02.8.0/24
-          gateway: 172.02.8.1
+        - subnet: 172.02.3.0/24
+          gateway: 172.02.3.1
 
 
 
