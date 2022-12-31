@@ -1,5 +1,27 @@
 version: '3'
 services:
+  api:
+    build: 
+      context: ./week_in_review/api
+      dockerfile: ./Dockerfile_api.dev
+    volumes:
+      - ./week_in_review/api:/api:cached
+    stdin_open: true # docker run -i
+    tty: true # docker run -t
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    hostname: api
+    depends_on:
+      - postgres
+    links:
+      - postgres:postgres
+    networks:
+      ncaab_net_v2:
+        ipv4_address: 172.02.2.4
+
+
   data:
     build:
       context: ./week_in_review/data
@@ -38,26 +60,25 @@ services:
         ipv4_address: 172.02.2.3
 
   
-  # frontend:
-  #   build:
-  #     context: ./frontend
-  #     dockerfile: ./Dockerfile_vue.dev
-  #   image: ncaab_vue_frontend
-  #   volumes:
-  #     # Mount the root folder that contains .git
-  #     - ./frontend:/ncaab_vue_frontend:cached
-  #   ports:
-  #     - 8080:8080
-  #   environment: 
-  #     - CHOKIDAR_USEPOLLING=true #should enable hot reloading
-  #     - BACKEND_API_ADDRESS=172.20.2.4
-  #   links:
-  #     - "api:pwd_django_api"
-  #   networks:
-  #     ncaab_net:
-  #       ipv4_address: 172.89.2.3
-  #   stdin_open: true # docker run -i
-  #   tty: true # docker run -t
+  frontend:
+    build:
+      context: ./week_in_review/frontend
+      dockerfile: ./Dockerfile_vue.dev
+    volumes:
+      # Mount the root folder that contains .git
+      - ./week_in_review/frontend:/ncaab_vue_frontend:cached
+    ports:
+      - 8080:8080
+    environment: 
+      - CHOKIDAR_USEPOLLING=true #should enable hot reloading
+      - BACKEND_API_ADDRESS=172.20.2.4
+    links:
+      - "api:api"
+    networks:
+      ncaab_net_v2:
+        ipv4_address: 172.02.2.5
+    stdin_open: true # docker run -i
+    tty: true # docker run -t
   
 networks:
   ncaab_net_v2:
