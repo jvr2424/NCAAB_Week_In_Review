@@ -6,8 +6,21 @@ import queries
 import schemas
 import serializers
 from database import Session, engine
+from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI()
+
+origins = [
+    "*",
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 # Dependency
 def get_db():
@@ -42,5 +55,6 @@ async def weeks_full(week_num: int, league_id: int, db: Session = Depends(get_db
     requres a query parameter for league
     """
     res = queries.get_week_full(db, league_id=league_id, week_number=week_num)
+    print(res)
     final_res = serializers.nest_week_rankings(res)
     return final_res

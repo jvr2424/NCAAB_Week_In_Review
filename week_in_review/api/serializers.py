@@ -37,7 +37,12 @@ def nest_week_rankings(response):
             this_item[name] = col_val
         all_items.append(this_item)
 
-    df = pd.DataFrame(all_items).fillna("").sort_values(["fr_ranking", "fs_game_date"])
+    df = (
+        pd.DataFrame(all_items)
+        .fillna("")
+        .replace("", None)
+        .sort_values(["fr_ranking", "fs_game_date"])
+    )
     print(df)
     top_25_df = (
         df.drop_duplicates(["fr_ranking", "fr_espn_team_id"])
@@ -46,7 +51,7 @@ def nest_week_rankings(response):
     )
     # [["fr_league_id", "fr_week", "fr_ranking", "fr_espn_team_id"]    ]
     print(top_25_df)
-
+    final_data = []
     for _, ranked_team in top_25_df.iterrows():
         this_team_rank = {
             "ranking": ranked_team["fr_ranking"],

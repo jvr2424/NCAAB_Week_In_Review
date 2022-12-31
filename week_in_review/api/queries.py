@@ -3,6 +3,7 @@ from sqlmodel import Session, select
 
 import models
 from database import engine
+import serializers
 
 
 def get_leagues(db: Session):
@@ -123,15 +124,5 @@ def get_week_full(db: Session, league_id: int, week_number: int):
     
     """
     results = db.exec(statement).all()
-    print(dir(results[0]))
-    print(results[0]._fields)
-    for f in results[0]._fields:
-        print(f)
 
     return results
-
-
-def get_week_full(db: Session, league_id: int, week_number: int):
-    # results = get_week(db, week_number=week_number)
-    statement = select(models.Weeks).where(models.Weeks.week_number == week_number)
-    results = db.exec(statement).first()

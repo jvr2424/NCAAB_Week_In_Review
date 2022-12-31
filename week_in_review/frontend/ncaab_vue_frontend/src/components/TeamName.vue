@@ -1,22 +1,20 @@
 <template>
-    <div :class="className"
-        @mouseover="displayTeamName()"
-        @click="displayTeamName()">
+    <div :class="className" @mouseover="displayTeamName()" @click="displayTeamName()">
         <!-- @mouseleave="isHover = false"> -->
         <!-- @click="wasClick=true, displayTeamName()"> -->
         <!-- {{ rank.espn_team.team_name }} -->
 
-        <img v-bind:src="team_obj.logo_url" v-bind:alt="team_obj.team_name" >
+        <img v-bind:src="team_obj.logo_url" v-bind:alt="team_obj.team_name">
         <div class="team-name-modal" v-if="showName">
             <div class="name-text">
-                {{team_obj.team_name}}
+                {{ team_obj.team_name }}
             </div>
         </div>
     </div>
 </template>
 
 <script>
-import { ref, onMounted, watch, computed } from 'vue'
+import { ref, watch } from 'vue'
 export default {
     name: 'TeamName',
     props: {
@@ -29,14 +27,11 @@ export default {
         const wasClick = ref(false)
 
         function displayTeamName() {
-            console.log('wasClick' + wasClick.value)
-            console.log('isHover' + isHover.value)
-            console.log('showName' + showName.value)
             showName.value = true
-             setTimeout(() => {
-                    showName.value = false
-                    wasClick.value = false
-                }, 3000)
+            setTimeout(() => {
+                showName.value = false
+                wasClick.value = false
+            }, 3000)
 
 
 
@@ -55,8 +50,7 @@ export default {
 
         }
 
-        watch(()=>isHover, (isHover, prevIsHover) => {
-            console.log('watching is hover' + isHover.value)
+        watch(() => isHover, (isHover, prevIsHover) => {
             displayTeamName()
         })
 
@@ -66,14 +60,13 @@ export default {
             showName,
             displayTeamName
         }
-        
+
     },
 }
 </script>
 
 
 <style>
-
 .team-name-modal {
     font-size: 9px;
     position: absolute;
@@ -83,11 +76,11 @@ export default {
     display: flex;
     justify-content: center;
     align-items: center;
-    top:0;
-    left:0;
+    top: 0;
+    left: 0;
 }
 
-.team-name-modal > .name-text{
+.team-name-modal>.name-text {
     text-align: center;
     height: max-content;
     width: max-content;

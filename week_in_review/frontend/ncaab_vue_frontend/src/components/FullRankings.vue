@@ -1,6 +1,6 @@
 <script>
 import TeamRank from "@/components/TeamRank.vue";
-import { ref, onMounted, watch, computed } from 'vue'
+import { onMounted, ref } from 'vue';
 
 
 export default {
@@ -9,69 +9,63 @@ export default {
     TeamRank,
   },
   setup() {
-    const api_data = ref({}) 
+    const api_data = ref({})
     const all_weeks = ref({})
     const selected_week = ref({})
-    
+    const all_leagues = ref({})
+    const selected_league = ref({})
 
-    function formatDate(dateStr) {
-      const date = new Date(dateStr);
-                // Then specify how you want your dates to be formatted
-      // var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-      var parts = dateStr.split('-');
-      //new Intl.DateTimeFormat('default', {dateStyle: 'long'}).format(date);
-      // return months[parts[1] - 1] + ' ' + Number(parts[2]) 
-      return parts[1] + '-' + parts[2]
-       
+    // let local_week_num;
+    // let local_league_id;
 
-    }
 
-    watch(() => selected_week,
-      (selected_week, prev_selected_week) => {
-        getFullWeek(selected_week.value)
-        /* ... */
-      }
-    )
 
-    function getFullWeek(weekNum){
-      fetch(`${import.meta.env.VITE_API_BASE_URI}/weeks_full/${weekNum}`)
-      // `http://10.8.29.182:8000/weeks_full/${weekNum}`
+
+    function getFullWeek(weekNum, league_id) {
+      fetch(`${import.meta.env.VITE_API_BASE_URI}/weeks_full/${weekNum}?league_id=${league_id}`)
+        // `http://10.8.29.182:8000/weeks_full/${weekNum}`
         .then(response => response.json())
         .then(data => {
           api_data.value = data
           console.log(data)
-          })
+        })
     }
 
-    function getWeeksList(){
-      //http://127.0.0.1:8000/weeks/
-      // console.log(import.meta.env.VITE_API_BASE_URI)
-      fetch(`${import.meta.env.VITE_API_BASE_URI}/weeks/`)
-        .then(response => response.json())
-        .then(data => {
-          all_weeks.value = data
-          console.log(data)
-          selected_week.value = data.filter(week => week.is_current_week).map((week)=>  week.week_number)[0]
-          getFullWeek(selected_week.value)
-          
-          })
-    }
-    
-    // computed(() =>
 
 
-    getWeeksList()
 
-    // onMounted(()=>{
-      
-    // })
+    onMounted(async function () {
+      const fetchData = async () => {
+        try {
+          const responsesJSON = await Promise.all([
+            fetch(`${import.meta.env.VITE_API_BASE_URI}/leagues/`),
+            fetch(`${import.meta.env.VITE_API_BASE_URI}/weeks/`)
+          ]);
+          const [leagues, weeks] = await Promise.all(responsesJSON.map(res => res.json()));
+          all_leagues.value = leagues
+          selected_league.value = leagues[0].league_id
+
+          all_weeks.value = weeks
+          selected_week.value = weeks.filter(week => week.is_current_week).map((week) => week.week_number)[0]
+
+          getFullWeek(selected_week.value, selected_league.value)
+
+
+        } catch (err) {
+          throw err;
+        }
+      };
+
+      fetchData();
+    })
 
     // expose to template and other options API hooks
     return {
       api_data,
-      formatDate,
       selected_week,
       all_weeks,
+      selected_league,
+      all_leagues,
       getFullWeek
 
     }
@@ -83,22 +77,28 @@ export default {
   <div class="wrapper">
     <!-- add dropdown to select week -->
     <div class="select-week">
+      <div class="label">Select League:</div>
+      <select v-model="selected_league" @change="getFullWeek(selected_week, selected_league)">
+        <option v-for="league in all_leagues" v-bind:key="league.league_id" v-bind:value="league.league_id">
+          {{ league.league_name }}</option>
+      </select>
       <div class="label">Select Week:</div>
-      <select v-model="selected_week" @change="getFullWeek(selected_week)">
-        <option v-for="week in all_weeks" v-bind:key="week.week_number" v-bind:value="week.week_number">{{week.week_number}}</option>
+      <select v-model="selected_week" @change="getFullWeek(selected_week, selected_league)">
+        <option v-for="week in all_weeks" v-bind:key="week.week_number" v-bind:value="week.week_number">
+          {{ week.week_number }}</option>
       </select>
     </div>
     <table>
       <thead>
-          <tr>
-            <td>RK</td>
-            <td>Games</td>
-          </tr>
+        <tr>
+          <td>RK</td>
+          <td>Games</td>
+        </tr>
       </thead>
       <tbody>
         <tr v-for="(rank) in api_data.rankings" :key="rank.ranking">
-          <TeamRank :rank="rank"/>
-          
+          <TeamRank :rank="rank" />
+
         </tr>
       </tbody>
     </table>
@@ -106,29 +106,30 @@ export default {
 </template>
 
 <style>
-*{
+* {
   box-sizing: border-box;
-  }
+}
 
-.wrapper{
+.wrapper {
   width: 75%;
   margin: 0 auto;
   display: flex;
   flex-direction: column;
 
 }
+
 .wrapper .select-week {
-  margin:0 auto 15px;
+  margin: 0 auto 15px;
   display: flex;
-  gap:45px;
-  
-  
+  gap: 45px;
+
+
 }
 
 table {
   table-layout: fixed;
   border-collapse: collapse;
-  margin:0 auto;
+  margin: 0 auto;
 }
 
 tr {
@@ -139,27 +140,28 @@ tr {
 
 
 td {
-  width:80px;
+  width: 80px;
   position: relative;
   /* display: inline; */
 }
 
-tr>td:nth-child(1){
+tr>td:nth-child(1) {
   border-spacing: 0;
   border-right: 1px solid black;
 }
-.td-game-wrapper { 
-    position: absolute;
-    height: 100%;
-    width: 100%;
-    top:0;
-    left:0;
-  }
+
+.td-game-wrapper {
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  top: 0;
+  left: 0;
+}
 
 .team-info {
   position: relative;
   /* height: 100%; */
-  
+
   display: grid;
   grid-template-columns: 15% 85%;
   grid-template-rows: 50% 50%;
@@ -172,12 +174,13 @@ tr>td:nth-child(1){
   grid-column-start: 1;
   grid-column-end: 2;
   font-size: 6px;
-  padding-left:1px;
+  padding-left: 1px;
   color: gray;
   /* border-right: 1px solid black;
   border-left: 1px solid black;
   border-bottom: 1px solid black; */
-}  
+}
+
 .team-rank {
   grid-row-start: 1;
   grid-row-end: 3;
@@ -185,6 +188,7 @@ tr>td:nth-child(1){
   grid-column-end: 2;
   text-align: center;
 }
+
 .team-name {
   margin-left: 9px;
   grid-row-start: 1;
@@ -197,10 +201,10 @@ tr>td:nth-child(1){
 
 
 .game-data {
-  width:100%; 
+  width: 100%;
   height: 100%;
   /* padding:10px; */
-  display:grid;
+  display: grid;
   grid-template-rows: 30% 40% 30%;
   grid-template-columns: 30% 40% 30%;
 }
@@ -212,7 +216,7 @@ tr>td:nth-child(1){
   grid-column-end: 2;
 }
 
-.game-location > div {
+.game-location>div {
   height: 100%;
   display: flex;
   align-items: center;
@@ -246,16 +250,17 @@ tr>td:nth-child(1){
 
 .team-name,
 .team-rank {
-  display:inline;
+  display: inline;
 }
-.team-name >img {
+
+.team-name>img {
   height: 20px;
   width: 20px;
-  
+
 
 }
 
-.opponent-name > img {
+.opponent-name>img {
   height: 20px;
   width: 20px;
   text-align: center;
@@ -275,53 +280,51 @@ tr>td:nth-child(1){
   grid-template-columns: 33% 34% 33%;
 }
 
-.final-score > .score {
+.final-score>.score {
   grid-column-start: 1;
   grid-column-end: 4;
   display: grid;
   grid-template-columns: 33% 34% 33%;
 }
 
-.final-score >  .score > .left-score { 
+.final-score>.score>.left-score {
   grid-column-start: 1;
   grid-column-end: 2;
   text-align: right;
 
 }
 
-.final-score > .score > .sep { 
+.final-score>.score>.sep {
   grid-column-start: 2;
   grid-column-end: 3;
   text-align: center;
 
 }
 
-.final-score > .right-score { 
+.final-score>.right-score {
   grid-column-start: 3;
   grid-column-end: 4;
   text-align: left;
 }
 
 
-.final-score > .unplayed_info {
+.final-score>.unplayed_info {
   grid-column-start: 3;
   grid-column-end: 4;
   text-align: center;
-  color:grey;
+  color: grey;
   font-size: 6px;
   margin-top: 10px;
   width: max-content;
 }
 
-.is_win{
+.is_win {
   /* background-color: #cfffc1; */
   background-color: #c1fec1
 }
 
-.is_loss{
+.is_loss {
   /* background-color: #ffc8c8; */
   background-color: #fec1c1
-
 }
-
 </style>

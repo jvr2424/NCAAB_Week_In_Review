@@ -6,7 +6,8 @@ __pycache__
 /api/ncaab/error.log
 /api/ncaab/access.log
 *.tar
-
+node_modules.zip
+node_modules
 .env
 *_env/
 *_env
