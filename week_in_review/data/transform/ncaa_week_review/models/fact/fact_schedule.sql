@@ -1,3 +1,4 @@
+{{ config(materialized='table') }}
 with mens_schedule as 
 (
     {{ get_fact_schedule(schedule_model= ref('stg_mens_schedule')) }}
