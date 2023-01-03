@@ -1,7 +1,11 @@
+import json
+
 import pandas as pd
 
+import models
 
-def nest_week_rankings(response):
+
+def nest_week_rankings(response: list[models.WeeksFull]):
     prefixs = {
         "fr_": None,
         "fs_": None,
@@ -33,9 +37,12 @@ def nest_week_rankings(response):
 
     for item in response:
         this_item = {}
-        for col_val, name in zip(item, item._fields):
-            this_item[name] = col_val
+        for key in item.dict().keys():
+            this_item[key] = getattr(item, key)
         all_items.append(this_item)
+
+    all_items_str = json.dumps(all_items, default=str)
+    all_items = json.loads(all_items_str)
 
     df = (
         pd.DataFrame(all_items)
@@ -44,6 +51,7 @@ def nest_week_rankings(response):
         .sort_values(["fr_ranking", "fs_game_date"])
     )
     print(df)
+
     top_25_df = (
         df.drop_duplicates(["fr_ranking", "fr_espn_team_id"])
         .copy()
@@ -51,6 +59,7 @@ def nest_week_rankings(response):
     )
     # [["fr_league_id", "fr_week", "fr_ranking", "fr_espn_team_id"]    ]
     print(top_25_df)
+
     final_data = []
     for _, ranked_team in top_25_df.iterrows():
         this_team_rank = {
