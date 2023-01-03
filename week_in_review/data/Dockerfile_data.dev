@@ -4,6 +4,6 @@ COPY requirements.txt /data/requirements.txt
 RUN pip install -r requirements.txt
 COPY entrypoint.sh /data/entrypoint.sh
 RUN ["chmod", "777", "entrypoint.sh"]
-CMD ./entrypoint.sh
+#CMD ./entrypoint.sh
 
 

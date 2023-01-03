@@ -19,7 +19,7 @@ services:
       - postgres:postgres
     networks:
       ncaab_net_v2:
-        ipv4_address: 172.02.2.4
+        ipv4_address: 172.2.5.4
 
 
   data:
@@ -41,7 +41,7 @@ services:
       - postgres:postgres
     networks:
       ncaab_net_v2:
-        ipv4_address: 172.02.2.2
+        ipv4_address: 172.2.5.2
 
   postgres:
     image: postgres
@@ -57,7 +57,7 @@ services:
       - "5432:5432"
     networks:
       ncaab_net_v2:
-        ipv4_address: 172.02.2.3
+        ipv4_address: 172.2.5.3
 
   
   frontend:
@@ -76,7 +76,7 @@ services:
       - "api:api"
     networks:
       ncaab_net_v2:
-        ipv4_address: 172.02.2.5
+        ipv4_address: 172.2.5.5
     stdin_open: true # docker run -i
     tty: true # docker run -t
   
@@ -86,8 +86,8 @@ networks:
     ipam:
       driver: default
       config:
-        - subnet: 172.02.2.0/24
-          gateway: 172.02.2.1
+        - subnet: 172.2.5.0/24
+          gateway: 172.2.5.1
 
 
 
