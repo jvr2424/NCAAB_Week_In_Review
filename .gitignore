@@ -15,6 +15,7 @@ node_modules
 ncaab_env/
 ncaab_env
 /ncaab_env
+*dbt.log.legacy
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
@@ -63,3 +64,4 @@ coverage.xml
 # Django stuff:
 *.log
 *.pot
+/week_in_review/data/transform/ncaa_week_review/logs/dbt.log.legacy

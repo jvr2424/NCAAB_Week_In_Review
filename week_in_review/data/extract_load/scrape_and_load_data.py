@@ -221,31 +221,47 @@ def load_or_update_schedule(urls: EspnUrls, espn_team_id: str) -> list[dict[str,
                                 # opponent_final_score
                                 # is_overtime
                                 spans = col.find_all("span")
-                                matches = regex.search(
-                                    spans[1].text.split("-")[1].strip()
-                                )
-                                if matches:
-                                    this_game["is_overtime"] = matches.group(
-                                        1
-                                    ).strip()  # spans[1].text.split('-')[1].strip().endswith('OT')
-                                else:
+                                score_text = spans[1].text
+                                is_valid_score_text = True
+                                try:
+                                    overtime_text = score_text.split("-")[1].strip()
+                                except Exception as e:
+                                    print("invalid score, can't find OT text")
+                                    print(f'score_text: {score_text}')
+                                    print(f'previous_span: {spans[0].text}')
+                                    print(f'game_date: {game_date}')
+                                    print(f'espn_team_id: {espn_team_id}')
+                                    #print(e)
+
                                     this_game["is_overtime"] = 0
+                                    is_valid_score_text = False
+
+                                if is_valid_score_text:
+                                    matches = regex.search(overtime_text)
+                                    if matches:
+                                        this_game["is_overtime"] = matches.group(
+                                            1
+                                        ).strip()  # spans[1].text.split('-')[1].strip().endswith('OT')
+                                    else:
+                                        this_game["is_overtime"] = 0
 
                                 this_game["is_win"] = spans[0].text == "W"
-                                if this_game["is_win"]:
-                                    this_game["final_score"] = spans[1].text.split("-")[
-                                        0
-                                    ]
-                                    this_game["opponent_final_score"] = regex.sub(
-                                        "", spans[1].text.split("-")[1]
-                                    ).strip()  # spans[1].text.split('-')[1].replace(' OT', '')
+                                if is_valid_score_text:
+                                    if this_game["is_win"]:
+                                        this_game["final_score"] = score_text.split("-")[0]
+                                        this_game["opponent_final_score"] = regex.sub(
+                                            "", score_text.split("-")[1]
+                                        ).strip()  # spans[1].text.split('-')[1].replace(' OT', '')
+                                    else:
+                                        this_game["final_score"] = regex.sub(
+                                            "", score_text.split("-")[1]
+                                        ).strip()  # spans[1].text.split('-')[1].replace(' OT', '')
+                                        this_game["opponent_final_score"] = score_text.split("-")[0]
                                 else:
-                                    this_game["final_score"] = regex.sub(
-                                        "", spans[1].text.split("-")[1]
-                                    ).strip()  # spans[1].text.split('-')[1].replace(' OT', '')
-                                    this_game["opponent_final_score"] = spans[
-                                        1
-                                    ].text.split("-")[0]
+                                    this_game["is_win"] =  "W" in spans[0].text 
+                                    this_game["final_score"] = 0
+                                    this_game["opponent_final_score"]=0
+
 
                                 this_game["game_time"] = None
                                 this_game["tv"] = None
